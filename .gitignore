@@ -1,0 +1,8 @@
+# Internal briefing — not for publication
+anthropic-deck-briefing.md
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.log
+node_modules/
