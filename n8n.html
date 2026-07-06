@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Back to Being × n8n · Proposal</title>
+<meta name="description" content="Three founders orchestrating agents handsfree while walking the Camino, donating the result to a mental-health nonprofit." />
+<meta name="theme-color" content="#2A3723" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Back to Being × n8n" />
+<meta property="og:description" content="Three founders orchestrating agents handsfree while walking the Camino, donating the result to a mental-health nonprofit." />
+<meta property="og:url" content="https://backtobeing.tech" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Back to Being × n8n" />
+<meta name="twitter:description" content="Three founders orchestrating agents handsfree while walking the Camino, donating the result to a mental-health nonprofit." />
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --canvas:#FFFEF1; --ink:#2A3723; --grass:#97A081; --sand:#B9A26E;
+    --sky:#A7BDD5; --creek:#424D69; --muted:#8b9183; --bodyink:#4d564a;
+    --n8n:#EA4B71;
+    --serif:'Instrument Serif', Georgia, serif;
+    --sans:'Inter', system-ui, sans-serif;
+    --pad: clamp(40px, 8vw, 150px);
+    --maxw: 900px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{ font-family:var(--sans); color:var(--ink); background:var(--ink); overflow:hidden; -webkit-font-smoothing:antialiased; }
+
+  #track{display:flex; height:100vh; width:100vw; transition:transform .7s cubic-bezier(.65,0,.2,1);}
+  .slide{ position:relative; min-width:100vw; height:100vh; overflow-y:auto; overflow-x:hidden;
+    display:flex; flex-direction:column; justify-content:center; padding:var(--pad); background:var(--canvas); }
+  .slide .inner{width:100%; max-width:var(--maxw); margin:auto;}
+
+  .eyebrow{ font-family:var(--sans); font-weight:400; font-size:clamp(13px,1.05vw,15px);
+    letter-spacing:.02em; color:var(--muted); margin-bottom:clamp(20px,2.8vw,30px); }
+  h1,h2{ font-family:var(--serif); font-weight:400; line-height:1.04; letter-spacing:-.01em;
+    color:var(--ink); font-size:clamp(40px,5.8vw,82px); }
+  h1.xl,h2.xl{font-size:clamp(46px,6.8vw,94px);}
+  h2.lg{font-size:clamp(36px,4.9vw,68px);}
+  .it{font-style:italic; color:var(--grass);}
+  .lead{ font-family:var(--sans); font-weight:400; line-height:1.6; color:var(--bodyink);
+    font-size:clamp(18px,1.65vw,22px); max-width:52ch; margin-top:clamp(18px,2.2vw,28px); }
+  .lead .em{color:var(--ink); font-weight:500;}
+
+  .slide.dark{background:var(--creek); color:var(--canvas);}
+  .slide.tree{background:var(--ink);}
+  .slide.dark h1,.slide.dark h2{color:var(--canvas);}
+  .slide.dark .it{color:var(--sky);}
+  .slide.tree .it{color:var(--sand);}
+  .slide.dark .eyebrow{color:rgba(255,254,241,.6);}
+  .slide.dark .lead{color:rgba(255,254,241,.8);}
+  .slide.dark .lead .em{color:#fff;}
+
+  /* n8n accent (slide 04) */
+  .slide.n8n .it{color:var(--n8n);}
+  .slide.n8n .rows .k{color:var(--n8n);}
+
+  .slide.cover{text-align:center;}
+  .slide.cover .inner{max-width:800px;}
+  .cover-mark{width:clamp(78px,9vw,116px); color:var(--grass); margin:0 auto clamp(22px,2.6vw,32px);}
+  .wordmark{font-family:var(--sans); font-weight:500; font-size:clamp(15px,1.5vw,19px); letter-spacing:.06em; color:var(--grass); text-transform:lowercase; margin-bottom:clamp(26px,3.4vw,46px);}
+  .cover h1{font-size:clamp(44px,6.6vw,92px);}
+  .cover .eyebrow{margin:clamp(24px,3vw,36px) 0 0; color:var(--muted);}
+  .cover-meta{font-family:var(--sans); font-size:clamp(12px,1.1vw,14px); color:var(--muted); letter-spacing:.03em; margin-top:14px;}
+
+  /* co-brand lockup */
+  .cobrand{display:inline-flex; align-items:center; gap:clamp(9px,1.2vw,15px); font-family:var(--sans); font-weight:500; font-size:clamp(15px,1.5vw,19px); letter-spacing:.06em; color:var(--grass); text-transform:lowercase; margin-bottom:clamp(26px,3.4vw,46px);}
+  .cobrand .x{opacity:.55; font-weight:400;}
+  .cobrand .n8n{display:inline-flex; align-items:center; gap:.42em;}
+  .cobrand .n8n svg{width:clamp(30px,3vw,40px); height:auto;}
+
+  /* from / to visual */
+  .shift{display:flex; align-items:center; gap:clamp(12px,1.8vw,24px); margin-top:clamp(40px,5vw,64px); max-width:600px;}
+  .shift-node{display:flex; flex-direction:column; gap:6px;}
+  .shift-node .big{font-family:var(--serif); font-size:clamp(24px,2.6vw,34px); line-height:1; color:rgba(255,254,241,.78);}
+  .shift-node .lb{font-family:var(--sans); font-size:clamp(12px,1.1vw,14px); color:rgba(255,254,241,.5);}
+  .shift-node.now{text-align:right;}
+  .shift-node.now .big{color:var(--sky);}
+  .shift-node.now .lb{color:rgba(167,189,213,.8);}
+  .shift-line{flex:1; height:1px; background:rgba(255,254,241,.28);}
+  .shift-arr{width:18px; height:18px; color:var(--sky); margin:0 -8px 0 -16px; flex:none;}
+
+  .rows{ display:grid; grid-template-columns:repeat(3,1fr); margin-top:clamp(30px,4vw,48px);
+    border-top:.5px solid rgba(42,55,35,.2); }
+  .rows .col{ padding:clamp(18px,1.8vw,24px) clamp(20px,2vw,28px) 4px 0; }
+  .rows .col + .col{ border-left:.5px solid rgba(42,55,35,.2); padding-left:clamp(20px,2vw,28px); }
+  .rows .k{ font-family:var(--sans); font-weight:500; font-size:clamp(15px,1.35vw,18px); color:var(--ink); }
+  .rows .v{ font-family:var(--sans); font-weight:400; font-size:clamp(14px,1.18vw,16px); color:var(--muted); margin-top:6px; line-height:1.5; }
+  .slide.dark .rows{border-color:rgba(255,254,241,.22);}
+  .slide.dark .rows .col + .col{border-color:rgba(255,254,241,.22);}
+  .slide.dark .rows .k{color:var(--canvas);}
+  .slide.dark .rows .v{color:rgba(255,254,241,.62);}
+
+  .kicker{ font-family:var(--serif); font-style:italic; font-size:clamp(20px,2vw,28px); color:var(--sand); margin-top:clamp(26px,3.2vw,40px); }
+  .slide:not(.dark) .kicker{color:var(--grass);}
+
+  .route{width:100%; max-width:760px; margin-top:clamp(30px,4vw,50px); height:auto; display:block;}
+  .stackline{font-family:var(--sans); font-size:clamp(12px,1.05vw,14px); color:var(--muted); letter-spacing:.02em; margin-top:clamp(16px,2vw,24px); line-height:1.6;}
+
+  .duo{ display:grid; grid-template-columns:1fr 1fr; gap:clamp(28px,4vw,64px); margin-top:clamp(30px,3.6vw,46px); }
+  .duo .blk{ border-top:.5px solid rgba(42,55,35,.2); padding-top:clamp(14px,1.5vw,18px); }
+  .duo .lbl{ font-family:var(--sans); font-weight:500; font-size:clamp(17px,1.7vw,22px); color:var(--ink); margin-bottom:12px; letter-spacing:-.01em; }
+  .slide.dark .duo .lbl{ color:var(--canvas); }
+  .duo .txt{ font-family:var(--sans); font-weight:400; font-size:clamp(15px,1.3vw,18px); line-height:1.55; color:var(--bodyink); }
+  .duo .txt .fig{ color:var(--ink); font-weight:500; }
+  .slide.dark .duo .blk{ border-color:rgba(255,254,241,.22); }
+  .slide.dark .duo .txt{ color:rgba(255,254,241,.78); }
+  .slide.dark .duo .txt .fig{ color:#fff; }
+
+  /* deliverables list */
+  .list{ margin-top:clamp(24px,3vw,38px); border-top:.5px solid rgba(255,254,241,.22); }
+  .list .item{ display:flex; gap:clamp(16px,2vw,26px); align-items:baseline;
+    padding:clamp(13px,1.5vw,18px) 0; border-bottom:.5px solid rgba(255,254,241,.14); }
+  .list .num{ font-family:var(--serif); font-size:clamp(18px,1.7vw,23px); color:var(--n8n); line-height:1; flex:none; width:1.3em; }
+  .list .dtxt{ font-family:var(--sans); font-weight:400; font-size:clamp(14.5px,1.25vw,17px); line-height:1.5; color:rgba(255,254,241,.78); }
+  .list .dtxt b{ color:#fff; font-weight:500; }
+
+  .links{ display:flex; flex-wrap:wrap; gap:clamp(14px,2vw,30px); margin-top:clamp(26px,3.2vw,40px); }
+  .links a{ font-family:var(--sans); font-weight:400; font-size:clamp(15px,1.4vw,19px); color:var(--canvas);
+    text-decoration:none; border-bottom:.5px solid rgba(255,254,241,.45); padding-bottom:3px; }
+  .links a.lead-link{color:var(--sand); border-color:var(--sand);}
+
+  .brandlock{display:inline-flex; align-items:center; gap:.5em; color:var(--grass); flex-wrap:wrap;}
+  .brandlock svg{width:clamp(28px,2.8vw,38px); height:auto;}
+  .brandlock .wm{font-family:var(--sans); font-weight:500; font-size:clamp(15px,1.4vw,19px); letter-spacing:.01em; color:var(--grass);}
+  .brandlock .x{opacity:.5; font-family:var(--sans); font-weight:400; font-size:clamp(15px,1.4vw,19px);}
+  .brandlock .n8n{display:inline-flex; align-items:center; gap:.4em; font-family:var(--sans); font-weight:500; font-size:clamp(15px,1.4vw,19px);}
+  .brandlock .n8n svg{width:clamp(26px,2.6vw,34px);}
+  .slide.dark .brandlock,.slide.dark .brandlock .wm,.slide.dark .brandlock .n8n{color:var(--canvas);}
+
+  .mark{position:absolute; top:var(--pad); left:var(--pad); display:inline-flex; align-items:center; gap:.45em; color:var(--grass);}
+  .mark svg{width:20px; height:auto;}
+  .mark span{font-family:var(--sans); font-weight:400; font-size:13px; color:var(--muted); letter-spacing:.01em;}
+  .slide.dark .mark{color:var(--canvas);}
+  .slide.dark .mark span{color:rgba(255,254,241,.6);}
+
+  #progresswrap{position:fixed; top:0; left:0; right:0; height:3px; background:rgba(42,55,35,.08); z-index:50;}
+  #progress{height:100%; width:0; background:var(--grass); transition:width .6s cubic-bezier(.65,0,.2,1);}
+  .nav{position:fixed; bottom:26px; left:50%; transform:translateX(-50%); z-index:50; display:flex; gap:8px;}
+  .nav button{ width:42px; height:42px; border-radius:50%; border:.5px solid rgba(42,55,35,.22);
+    background:var(--canvas); cursor:pointer; color:var(--ink); display:grid; place-items:center; transition:.2s; font-size:0;}
+  .nav button:hover{background:var(--ink); color:var(--canvas); border-color:var(--ink);}
+  .nav button:disabled{opacity:.25; cursor:default;}
+  .nav button svg{width:17px; height:17px;}
+  #counter{position:fixed; bottom:33px; right:30px; z-index:50; font-family:var(--sans); font-size:13px; letter-spacing:.06em; color:var(--muted);}
+
+  /* intro (Lottie logo animation) */
+  #intro{position:fixed; inset:0; z-index:200; background:var(--canvas); display:flex; align-items:center; justify-content:center; transition:opacity .6s ease;}
+  #intro.hide{opacity:0; pointer-events:none;}
+  #introAnim{width:min(82vw,780px); aspect-ratio:16/9;}
+
+  .reveal>*{opacity:0; transform:translateY(14px); transition:opacity .8s ease, transform .8s cubic-bezier(.2,.7,.2,1);}
+  .slide.active .reveal>*{opacity:1; transform:none;}
+  .slide.active .reveal>*:nth-child(1){transition-delay:.06s;}
+  .slide.active .reveal>*:nth-child(2){transition-delay:.16s;}
+  .slide.active .reveal>*:nth-child(3){transition-delay:.26s;}
+  .slide.active .reveal>*:nth-child(4){transition-delay:.36s;}
+  .slide.active .reveal>*:nth-child(5){transition-delay:.46s;}
+
+  @media (max-width:720px){
+    .rows{grid-template-columns:1fr; border-top:none; margin-top:24px;}
+    .rows .col{border-top:.5px solid rgba(42,55,35,.18); padding:16px 0 8px;}
+    .rows .col + .col{border-left:none; padding-left:0;}
+    .slide.dark .rows .col{border-color:rgba(255,254,241,.2);}
+    .duo{grid-template-columns:1fr; gap:24px;}
+    .mark{display:none;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    #intro{display:none;}
+    .reveal>*{opacity:1; transform:none; transition:none;}
+    #track{transition:none;}
+  }
+  @media print{
+    @page{size:1280px 720px; margin:0;}
+    body{overflow:visible; background:#fff;}
+    #intro{display:none;}
+    #track{display:block; transform:none!important; height:auto; width:auto;}
+    .slide{height:720px; width:1280px; page-break-after:always; break-after:page; overflow:hidden;}
+    .reveal>*{opacity:1!important; transform:none!important;}
+    #progresswrap,.nav,#counter{display:none!important;}
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="logomark" viewBox="0 0 970.79 511.74">
+    <polygon fill="currentColor" points="970.79 413.54 613.32 510.85 590.43 471.25 575.75 445.83 565.01 427.21 550.52 402.1 538.82 381.82 527.25 361.8 498.14 311.46 485.68 289.91 470.68 315.91 443.73 362.63 432.54 381.95 420.66 402.42 407.31 425.62 406.23 427.52 395.3 446.4 380.93 471.32 357.6 511.74 0 417.42 29.49 305.67 291.88 374.83 99.22 183.76 180.58 101.7 373.18 292.71 301.99 30.96 413.48 .64 484.79 262.45 553.95 0 665.69 29.49 596.54 292.01 787.67 99.29 869.73 180.65 678.53 373.37 940.35 302.05 970.79 413.54"/>
+  </symbol>
+  <symbol id="n8nmark" viewBox="0 0 52 24">
+    <path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" d="M10.5 12 H21 M30 12 C35 12, 36 6, 41 6 M30 12 C35 12, 36 18, 41 18"/>
+    <circle cx="6" cy="12" r="4" fill="currentColor"/>
+    <circle cx="26" cy="12" r="4.6" fill="currentColor"/>
+    <circle cx="44" cy="6" r="3.2" fill="currentColor"/>
+    <circle cx="44" cy="18" r="3.2" fill="currentColor"/>
+  </symbol>
+  <symbol id="arrowR" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="arrowL" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+</svg>
+
+<div id="intro"><div id="introAnim"></div></div>
+
+<div id="progresswrap"><div id="progress"></div></div>
+
+<div id="track">
+
+  <!-- 1 · COVER -->
+  <section class="slide cover">
+    <div class="inner reveal">
+      <svg class="cover-mark" viewBox="0 0 970.79 511.74"><use href="#logomark"/></svg>
+      <div class="cobrand">
+        <span>back to being</span>
+        <span class="x">&times;</span>
+        <span class="n8n"><svg viewBox="0 0 52 24"><use href="#n8nmark"/></svg>n8n</span>
+      </div>
+      <h1>Technology should give our attention <span class="it">back.</span></h1>
+      <div class="eyebrow" style="margin-bottom:0;">A proposal for n8n</div>
+      <div class="cover-meta">Summer 2026 · backtobeing.tech</div>
+    </div>
+  </section>
+
+  <!-- 2 · THE THESIS -->
+  <section class="slide dark">
+    <div class="mark"><svg viewBox="0 0 970.79 511.74"><use href="#logomark"/></svg><span>back to being</span></div>
+    <div class="inner reveal">
+      <div class="eyebrow">Our thesis</div>
+      <h2 class="xl">Being busy isn't being <span class="it">present.</span></h2>
+      <p class="lead">Our generation grew up always on: always behind, never quite here. The shift worth betting on goes back toward presence. <span class="em">Technology that gives our attention back, instead of taking more of it.</span></p>
+      <div class="shift">
+        <div class="shift-node"><span class="big">always on</span><span class="lb">the default today</span></div>
+        <span class="shift-line"></span>
+        <svg class="shift-arr" viewBox="0 0 24 24"><use href="#arrowR"/></svg>
+        <div class="shift-node now"><span class="big">present</span><span class="lb">where we're headed</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 · WHAT WE DO -->
+  <section class="slide">
+    <div class="mark"><svg viewBox="0 0 970.79 511.74"><use href="#logomark"/></svg><span>back to being</span></div>
+    <div class="inner reveal">
+      <div class="eyebrow">What we do</div>
+      <h2>The world as <span class="it">our office.</span></h2>
+      <p class="lead">We're Caesar, Stijn and Max, three founders who build like everyone our age: heads down, screens on. This summer we do it differently. We walk 120 km of the Camino and build as we go, laptop in the backpack, Starlink overhead, glasses for a screen. The office fits in a bag, and the agents that run our build come with us. <span class="em">Voice in, a joystick to steer, the screen on our face, hands and eyes free for the trail.</span></p>
+      <svg class="route" viewBox="0 0 920 108" role="img" aria-label="Route from Tui, Portugal to Santiago, Spain, 120 km over 6 days">
+        <text x="460" y="20" text-anchor="middle" fill="#B9A26E" font-family="Inter, sans-serif" font-size="14" font-weight="500" letter-spacing="1.5">120 km · 6 days</text>
+        <line x1="74" y1="58" x2="846" y2="58" stroke="#97A081" stroke-opacity="0.5" stroke-width="1.5" stroke-dasharray="1.5 8" stroke-linecap="round"/>
+        <circle cx="333" cy="58" r="3" fill="#97A081" fill-opacity="0.55"/>
+        <circle cx="587" cy="58" r="3" fill="#97A081" fill-opacity="0.55"/>
+        <circle cx="74" cy="58" r="6.5" fill="#97A081"/>
+        <circle cx="846" cy="58" r="6.5" fill="#2A3723"/>
+        <text x="68" y="90" fill="#2A3723" font-family="Inter, sans-serif" font-size="15.5" font-weight="500">Tui<tspan fill="#8b9183" font-weight="400"> · Portugal</tspan></text>
+        <text x="852" y="90" text-anchor="end" fill="#2A3723" font-family="Inter, sans-serif" font-size="15.5" font-weight="500">Santiago<tspan fill="#8b9183" font-weight="400"> · Spain</tspan></text>
+      </svg>
+      <div class="stackline">n8n for orchestration · Claude Code in VS Code · voice via Wispr Flow · Switch joystick · Xreal glasses · Starlink</div>
+    </div>
+  </section>
+
+  <!-- 4 · WHERE n8n COMES IN -->
+  <section class="slide dark n8n">
+    <div class="mark"><svg viewBox="0 0 970.79 511.74"><use href="#logomark"/></svg><span>back to being</span></div>
+    <div class="inner reveal">
+      <div class="eyebrow">Where n8n comes in</div>
+      <h2 class="lg">Set the flow, then <span class="it">look up.</span></h2>
+      <p class="lead">n8n is the layer that runs our build while we move. We're not hunched over a dashboard keeping it alive: we set up the flows and they carry on, connecting the tools, running the agents, handling the work in between. <span class="em">The best automation doesn't ask for more of your attention. It hands it back.</span></p>
+      <div class="rows">
+        <div class="col"><div class="k">What it does</div><div class="v">n8n orchestrates the flows behind our build: the agents, the tools, the steps between them. The busywork that would otherwise keep us at a desk.</div></div>
+        <div class="col"><div class="k">Why it fits</div><div class="v">Automation that runs on its own is what lets us work from anywhere. Set it going, put the laptop away, keep walking. The flow doesn't need us watching it.</div></div>
+        <div class="col"><div class="k">What it gives back</div><div class="v">Time to look up. The point isn't how hard we can push it, but how much attention it hands back to us on the trail.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · WHY MIND -->
+  <section class="slide">
+    <div class="mark"><svg viewBox="0 0 970.79 511.74"><use href="#logomark"/></svg><span>back to being</span></div>
+    <div class="inner reveal">
+      <div class="eyebrow">Why MIND</div>
+      <h2 class="xl">MIND is the whole <span class="it">point.</span></h2>
+      <p class="lead">What we build, we hand over for free to Stichting MIND, a Dutch mental-health foundation. <span class="em">The walk ends, the tool stays.</span> That's the proof this isn't a stunt: something real comes out of it.</p>
+      <div class="kicker">The walk ends. The tool keeps going.</div>
+    </div>
+  </section>
+
+  <!-- 6 · THE ASK -->
+  <section class="slide">
+    <div class="mark"><svg viewBox="0 0 970.79 511.74"><use href="#logomark"/></svg><span>back to being</span></div>
+    <div class="inner reveal">
+      <div class="eyebrow">The ask</div>
+      <h2>What we're <span class="it">asking.</span></h2>
+      <p class="lead">We're looking for a sponsor for the experiment. What exactly that looks like, we'd rather shape together on a call. Here's the frame.</p>
+      <div class="duo">
+        <div class="blk"><div class="lbl">What we're looking for</div><div class="txt">A partner who helps make six days on the trail possible, and in return becomes part of a story worth watching. We already have <span class="fig">Watermelon, Remote, Helloprint and Wispr Flow</span> on board. We'd love n8n in the mix, because this experiment is squarely about what n8n does.</div></div>
+        <div class="blk"><div class="lbl">What you get</div><div class="txt">n8n featured in everything we make, from the documentary to the shorts to the agent-flow animations that come straight out of your product. The story of automation that gives your time back, lived by three founders who set the flows running and kept walking, not claimed in an ad.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 · DELIVERABLES -->
+  <section class="slide dark n8n">
+    <div class="mark"><svg viewBox="0 0 970.79 511.74"><use href="#logomark"/></svg><span>back to being</span></div>
+    <div class="inner reveal">
+      <div class="eyebrow">What we deliver</div>
+      <h2 class="lg">A concrete <span class="it">example.</span></h2>
+      <p class="lead">This is what we agreed with Wispr Flow. Yours would look similar, shaped to fit n8n.</p>
+      <div class="list">
+        <div class="item"><div class="num">1</div><div class="dtxt"><b>One branded documentary</b>, about 15 minutes, on the trek and the build, with n8n as an official sponsor for as long as the film stays online.</div></div>
+        <div class="item"><div class="num">2</div><div class="dtxt"><b>n8n integrated throughout</b>: on-screen product use and an official sponsor credit, in keeping with the nature of the trek.</div></div>
+        <div class="item"><div class="num">3</div><div class="dtxt"><b>Your link in the description</b>, download and campaign offer, on the film and every piece of supporting content.</div></div>
+        <div class="item"><div class="num">4</div><div class="dtxt"><b>A pinned comment</b> with your link on every platform where the film is published.</div></div>
+        <div class="item"><div class="num">5</div><div class="dtxt"><b>The agent-flow animations</b>: visual workflow content that shows orchestration in action, made for your community and channels.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 · CLOSE -->
+  <section class="slide tree dark">
+    <div class="inner reveal">
+      <div class="eyebrow">The invitation</div>
+      <h2 class="xl">Take the office off the desk, <span class="it">with us.</span></h2>
+      <p class="lead">We capture all of it in a short documentary, and the agent flows become shareable the moment they run. <span class="em">We'd love n8n in it from the first step.</span> And there's a n8n meetup waiting in Santiago the day we arrive.</p>
+      <div class="links">
+        <a class="lead-link" href="mailto:stijn@backtobeing.tech">stijn@backtobeing.tech</a>
+        <a href="https://backtobeing.tech">backtobeing.tech</a>
+      </div>
+      <div class="brandlock" style="margin-top:clamp(36px,4.5vw,58px);">
+        <svg viewBox="0 0 970.79 511.74"><use href="#logomark"/></svg>
+        <span class="wm">back to being</span>
+        <span class="x">&times;</span>
+        <span class="n8n"><svg viewBox="0 0 52 24"><use href="#n8nmark"/></svg>n8n</span>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<nav class="nav">
+  <button id="prev" aria-label="Previous slide"><svg><use href="#arrowL"/></svg></button>
+  <button id="next" aria-label="Next slide"><svg><use href="#arrowR"/></svg></button>
+</nav>
+<div id="counter">01 / 08</div>
+
+<script>
+  const track=document.getElementById('track');
+  const slides=[...document.querySelectorAll('.slide')];
+  const progress=document.getElementById('progress');
+  const counter=document.getElementById('counter');
+  const prevBtn=document.getElementById('prev');
+  const nextBtn=document.getElementById('next');
+  let i=0;
+  const pad2=n=>String(n).padStart(2,'0');
+  function update(){
+    track.style.transform='translateX(-'+(i*100)+'vw)';
+    progress.style.width=(i/(slides.length-1)*100)+'%';
+    counter.textContent=pad2(i+1)+' / '+pad2(slides.length);
+    slides.forEach((s,k)=>s.classList.toggle('active',k===i));
+    prevBtn.disabled=(i===0); nextBtn.disabled=(i===slides.length-1);
+  }
+  function go(n){ i=Math.max(0,Math.min(slides.length-1,n)); update(); }
+  window.addEventListener('keydown',e=>{
+    if(['ArrowRight','PageDown',' ','Enter'].includes(e.key)){e.preventDefault();go(i+1);}
+    else if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();go(i-1);}
+    else if(e.key==='Home'){e.preventDefault();go(0);}
+    else if(e.key==='End'){e.preventDefault();go(slides.length-1);}
+  });
+  nextBtn.addEventListener('click',()=>go(i+1));
+  prevBtn.addEventListener('click',()=>go(i-1));
+  let x0=null,y0=null;
+  window.addEventListener('touchstart',e=>{x0=e.touches[0].clientX;y0=e.touches[0].clientY;},{passive:true});
+  window.addEventListener('touchend',e=>{ if(x0===null)return; const dx=e.changedTouches[0].clientX-x0, dy=e.changedTouches[0].clientY-y0; if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)){go(dx<0?i+1:i-1);} x0=null;y0=null; },{passive:true});
+  update();
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+<script>
+  (function(){
+    var intro=document.getElementById('intro');
+    function endIntro(){ if(!intro) return; intro.classList.add('hide'); var n=intro; intro=null; setTimeout(function(){ if(n&&n.parentNode) n.parentNode.removeChild(n); }, 700); }
+    if(typeof lottie==='undefined'){ endIntro(); return; }
+    try{
+      var anim=lottie.loadAnimation({ container:document.getElementById('introAnim'), renderer:'svg', loop:false, autoplay:true, path:'logo-animation.json' });
+      anim.setSpeed(1);
+      anim.addEventListener('complete', endIntro);
+      anim.addEventListener('data_failed', endIntro);
+      setTimeout(endIntro, 4000);
+    }catch(e){ endIntro(); }
+  })();
+</script>
+</body>
+</html>
