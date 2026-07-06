@@ -150,9 +150,13 @@
   #counter{position:fixed; bottom:33px; right:30px; z-index:50; font-family:var(--sans); font-size:13px; letter-spacing:.06em; color:var(--muted);}
 
   /* intro (Lottie logo animation) */
-  #intro{position:fixed; inset:0; z-index:200; background:var(--canvas); display:flex; align-items:center; justify-content:center; transition:opacity .6s ease;}
+  #intro{position:fixed; inset:0; z-index:200; background:var(--canvas); display:flex; align-items:center; justify-content:center; transition:opacity .7s ease;}
   #intro.hide{opacity:0; pointer-events:none;}
-  #introAnim{width:min(82vw,780px); aspect-ratio:16/9;}
+  #introAnim{width:min(90vw,880px); aspect-ratio:16/9;}
+  #introFallback{display:none; width:clamp(120px,16vw,190px); color:var(--grass); opacity:0; animation:introFade .6s ease forwards;}
+  #intro.static #introAnim{display:none;}
+  #intro.static #introFallback{display:block;}
+  @keyframes introFade{to{opacity:1;}}
 
   .reveal>*{opacity:0; transform:translateY(14px); transition:opacity .8s ease, transform .8s cubic-bezier(.2,.7,.2,1);}
   .slide.active .reveal>*{opacity:1; transform:none;}
@@ -171,7 +175,6 @@
     .mark{display:none;}
   }
   @media (prefers-reduced-motion:reduce){
-    #intro{display:none;}
     .reveal>*{opacity:1; transform:none; transition:none;}
     #track{transition:none;}
   }
@@ -203,7 +206,7 @@
   <symbol id="arrowL" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M19 12H5M11 6l-6 6 6 6"/></symbol>
 </svg>
 
-<div id="intro"><div id="introAnim"></div></div>
+<div id="intro"><div id="introAnim"></div><svg id="introFallback" viewBox="0 0 970.79 511.74" aria-hidden="true"><use href="#logomark"/></svg></div>
 
 <div id="progresswrap"><div id="progress"></div></div>
 
@@ -379,15 +382,26 @@
 <script>
   (function(){
     var intro=document.getElementById('intro');
-    function endIntro(){ if(!intro) return; intro.classList.add('hide'); var n=intro; intro=null; setTimeout(function(){ if(n&&n.parentNode) n.parentNode.removeChild(n); }, 700); }
-    if(typeof lottie==='undefined'){ endIntro(); return; }
+    if(!intro) return;
+    var MIN=1300, MAX=4500, start=Date.now(), done=false;
+    function fadeOut(){
+      if(done) return; done=true;
+      var wait=Math.max(0, MIN-(Date.now()-start));
+      setTimeout(function(){
+        intro.classList.add('hide');
+        setTimeout(function(){ if(intro&&intro.parentNode) intro.parentNode.removeChild(intro); }, 750);
+      }, wait);
+    }
+    function staticSplash(){ intro.classList.add('static'); setTimeout(fadeOut, 400); }
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(reduce || typeof lottie==='undefined'){ staticSplash(); return; }
     try{
       var anim=lottie.loadAnimation({ container:document.getElementById('introAnim'), renderer:'svg', loop:false, autoplay:true, path:'logo-animation.json' });
       anim.setSpeed(1);
-      anim.addEventListener('complete', endIntro);
-      anim.addEventListener('data_failed', endIntro);
-      setTimeout(endIntro, 4000);
-    }catch(e){ endIntro(); }
+      anim.addEventListener('complete', fadeOut);
+      anim.addEventListener('data_failed', staticSplash);
+      setTimeout(fadeOut, MAX);
+    }catch(e){ staticSplash(); }
   })();
 </script>
 </body>
