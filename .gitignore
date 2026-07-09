@@ -6,3 +6,10 @@ anthropic-deck-briefing.md
 Thumbs.db
 *.log
 node_modules/
+
+# MIND-deck heeft een eigen repo (stinoe21/mind-weerbericht); niet in de hub committen
+mind-weerbericht.html
+mind-logo.webp
+
+# Vertrouwelijke MIND-huisstijl/brondocs: nooit naar de publieke repo
+Mind-huisstijl/
