@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Het Mentale Weerbericht · een concept voor MIND</title>
+<meta name="description" content="De app die de kennis, hulp en content van MIND persoonlijk en dagelijks toegankelijk maakt. De app-flow, visueel uitgelegd." />
+<meta name="theme-color" content="#E65925" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Het Mentale Weerbericht" />
+<meta property="og:description" content="De app die MIND persoonlijk en dagelijks maakt. De workflow, visueel uitgelegd." />
+<link rel="icon" type="image/webp" href="mind-logo.webp" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --paper:#FFFFFF; --paper-warm:#FFFAF3; --ink:#141414; --ink-soft:#4a4a4a; --muted:#8a8a8a;
+    --line:rgba(20,20,20,.14);
+    /* MIND-huisstijlkleuren. Weerreeks warm -> koel: helder(goud) -> opklaring(oranje) -> bewolkt(aqua) -> mistig(blauw) -> storm(diepblauw) */
+    --orange:#E65925; --amber:#FFCC32; --teal:#00D1D8; --blue:#0097C5; --navy:#1E2863;
+    --sans:'Mulish', system-ui, -apple-system, sans-serif;
+    --pad: clamp(40px, 8vw, 140px);
+    --maxw: 940px;
+    --nn: clamp(30px, 2.8vw, 40px);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{ font-family:var(--sans); color:var(--ink); background:var(--ink); overflow:hidden; -webkit-font-smoothing:antialiased; }
+
+  #track{display:flex; height:100vh; width:100vw; transition:transform .7s cubic-bezier(.65,0,.2,1);}
+  .slide{ position:relative; min-width:100vw; height:100vh; overflow-y:auto; overflow-x:hidden;
+    display:flex; flex-direction:column; justify-content:center; padding:var(--pad); background:var(--paper); }
+  .slide.warm{background:var(--paper-warm);}
+  .slide.tight{ padding-top:clamp(34px,5vw,72px); padding-bottom:clamp(34px,5vw,72px); }
+  .slide .inner{width:100%; max-width:var(--maxw); margin:auto; position:relative; z-index:1;}
+
+  .slide.glow::before{content:""; position:absolute; inset:0; z-index:0; pointer-events:none;
+    background:radial-gradient(58% 52% at 90% 6%, rgba(230,89,37,.11), transparent 72%);}
+  .slide.dark.glow::before{background:radial-gradient(60% 55% at 88% 4%, rgba(230,89,37,.26), transparent 70%);}
+
+  .eyebrow{ font-family:var(--sans); font-weight:700; font-size:clamp(12px,1vw,14px);
+    letter-spacing:.09em; text-transform:uppercase; color:var(--orange); margin-bottom:clamp(16px,2.4vw,26px); }
+  h1,h2{ font-family:var(--sans); font-weight:800; line-height:1.03; letter-spacing:-.022em;
+    color:var(--ink); font-size:clamp(38px,5.4vw,76px); }
+  h1.xl,h2.xl{font-size:clamp(44px,6.4vw,90px); font-weight:900;}
+  h2.lg{font-size:clamp(34px,4.7vw,64px);}
+  h2.md{font-size:clamp(32px,4.3vw,58px);}
+  .hl{color:var(--orange);}
+  .lead{ font-family:var(--sans); font-weight:400; line-height:1.62; color:var(--ink-soft);
+    font-size:clamp(17px,1.55vw,21px); max-width:56ch; margin-top:clamp(16px,2vw,24px); }
+  .lead .em{color:var(--ink); font-weight:700;}
+  .lead.sm{font-size:clamp(15px,1.35vw,18px);}
+
+  .slide.dark{background:var(--ink); color:#fff;}
+  .slide.dark h1,.slide.dark h2{color:#fff;}
+  .slide.dark .hl{color:var(--amber);}
+  .slide.dark .eyebrow{color:var(--amber);}
+  .slide.dark .lead{color:rgba(255,255,255,.82);}
+  .slide.dark .lead .em{color:#fff;}
+
+  /* cover */
+  .slide.cover{text-align:center;}
+  .slide.cover .inner{max-width:820px;}
+  .cover-logo{width:clamp(190px,25vw,320px); height:auto; margin:0 auto clamp(6px,1.2vw,14px); display:block;}
+  .cover h1{font-size:clamp(42px,6.2vw,86px); font-weight:900;}
+  .cover .eyebrow{margin:clamp(18px,2.4vw,30px) 0 0;}
+  .cover-meta{font-family:var(--sans); font-weight:500; font-size:clamp(12px,1.1vw,14px); color:var(--muted); letter-spacing:.02em; margin-top:12px;}
+  .weatherrow{display:flex; align-items:center; justify-content:center; gap:clamp(20px,3vw,40px); margin-top:clamp(26px,3.4vw,44px);}
+  .weatherrow svg{width:clamp(26px,2.6vw,34px); height:auto;}
+
+  /* from / to */
+  .shift{display:flex; align-items:center; gap:clamp(12px,1.8vw,22px); margin-top:clamp(30px,4vw,52px); max-width:600px;}
+  .shift-node{display:flex; flex-direction:column; gap:5px;}
+  .shift-node .big{font-family:var(--sans); font-weight:700; font-size:clamp(19px,2vw,26px); line-height:1.05; color:var(--muted);}
+  .shift-node .lb{font-family:var(--sans); font-weight:500; font-size:clamp(12px,1.05vw,13px); color:var(--muted); opacity:.8;}
+  .shift-node.now{text-align:right;}
+  .shift-node.now .big{color:var(--orange);}
+  .shift-line{flex:1; height:2px; background:var(--line); border-radius:2px;}
+  .shift-arr{width:20px; height:20px; color:var(--orange); margin:0 -8px 0 -16px; flex:none;}
+
+  /* three-up rows */
+  .rows{ display:grid; grid-template-columns:repeat(3,1fr); margin-top:clamp(28px,3.6vw,46px);
+    border-top:2px solid var(--line); }
+  .rows .col{ padding:clamp(16px,1.7vw,22px) clamp(18px,1.9vw,26px) 4px 0; position:relative; }
+  .rows .col::before{content:""; position:absolute; top:-2px; left:0; width:44px; height:2px; background:var(--orange);}
+  .rows .col + .col{ border-left:1px solid var(--line); padding-left:clamp(18px,1.9vw,26px); }
+  .rows .col + .col::before{left:clamp(18px,1.9vw,26px);}
+  .rows .k{ font-family:var(--sans); font-weight:800; font-size:clamp(16px,1.4vw,19px); color:var(--ink); }
+  .rows .v{ font-family:var(--sans); font-weight:400; font-size:clamp(14px,1.18vw,16px); color:var(--ink-soft); margin-top:8px; line-height:1.5; }
+  .slide.dark .rows{border-color:rgba(255,255,255,.2);}
+  .slide.dark .rows .col + .col{border-color:rgba(255,255,255,.2);}
+  .slide.dark .rows .k{color:#fff;}
+  .slide.dark .rows .v{color:rgba(255,255,255,.66);}
+
+  /* weather spectrum */
+  .spectrum{display:grid; grid-template-columns:repeat(5,1fr); gap:clamp(12px,1.8vw,24px); margin-top:clamp(30px,3.8vw,50px);}
+  .wstate{display:flex; flex-direction:column; gap:11px;}
+  .wstate .ic{width:clamp(38px,3.6vw,50px); height:clamp(38px,3.6vw,50px);}
+  .wstate .nm{font-family:var(--sans); font-weight:800; font-size:clamp(15px,1.35vw,18px); color:var(--ink);}
+  .wstate .ms{font-family:var(--sans); font-weight:400; font-size:clamp(13px,1.08vw,15px); color:var(--muted); line-height:1.45;}
+  .slide.dark .wstate .nm{color:#fff;}
+  .slide.dark .wstate .ms{color:rgba(255,255,255,.58);}
+
+  /* daily flow */
+  .flow{margin-top:clamp(22px,2.8vw,38px);}
+  .step{position:relative; display:grid; grid-template-columns:var(--nn) 1fr; gap:clamp(16px,1.8vw,24px); padding-bottom:clamp(15px,1.9vw,24px);}
+  .step:last-child{padding-bottom:0;}
+  .step::before{content:""; position:absolute; left:calc(var(--nn)/2 - 1px); top:var(--nn); bottom:0; width:2px; background:var(--line);}
+  .step:last-child::before{display:none;}
+  .step .n{width:var(--nn); height:var(--nn); border-radius:50%; background:var(--orange); color:#fff; display:grid; place-items:center; font-family:var(--sans); font-weight:800; font-size:clamp(13px,1.15vw,15px); position:relative; z-index:2;}
+  .step .st{padding-top:clamp(3px,.5vw,7px);}
+  .step .st-t{font-family:var(--sans); font-weight:800; font-size:clamp(16px,1.5vw,20px); color:var(--ink); line-height:1.25;}
+  .step .st-d{font-family:var(--sans); font-weight:400; font-size:clamp(14px,1.18vw,16px); color:var(--ink-soft); line-height:1.5; margin-top:4px;}
+  .step .st-d .q{font-weight:700; color:var(--orange);}
+
+  /* dashboard mockup */
+  .mock{display:grid; grid-template-columns:1fr auto; gap:clamp(28px,4.5vw,64px); align-items:center; margin-top:clamp(20px,2.6vw,34px);}
+  .zones{display:flex; flex-direction:column; gap:clamp(14px,1.8vw,22px);}
+  .zone{border-left:3px solid var(--orange); padding-left:16px;}
+  .zone.b2{border-color:var(--teal);}
+  .zone.b3{border-color:var(--navy);}
+  .zone .zk{font-family:var(--sans); font-weight:800; font-size:clamp(16px,1.45vw,19px); color:var(--ink);}
+  .zone .zv{font-family:var(--sans); font-weight:400; font-size:clamp(14px,1.18vw,16px); color:var(--ink-soft); line-height:1.5; margin-top:3px; max-width:38ch;}
+  .zone .zt{font-family:var(--sans); font-weight:700; font-size:clamp(12px,1.02vw,13px); color:var(--muted); margin-top:5px; letter-spacing:.02em;}
+
+  .phone{width:clamp(220px,21vw,270px); border-radius:38px; border:1px solid var(--line); background:#fff; padding:clamp(14px,1.5vw,20px); box-shadow:0 36px 66px -34px rgba(20,20,20,.4); flex:none;}
+  .ph-top{font-family:var(--sans); font-weight:800; font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); text-align:center; margin-bottom:12px;}
+  .ph-hero{border-radius:22px; background:linear-gradient(155deg,#FFE9CC,#FFF6E6); padding:clamp(16px,1.7vw,22px); text-align:center; margin-bottom:12px;}
+  .ph-w{width:46px; height:46px; color:var(--orange); margin:0 auto 8px; display:block;}
+  .ph-hero-t{font-family:var(--sans); font-weight:600; font-size:12px; color:var(--muted);}
+  .ph-hero-s{font-family:var(--sans); font-weight:800; font-size:clamp(18px,1.8vw,22px); color:var(--ink); line-height:1.12; margin-top:3px;}
+  .ph-card{display:flex; flex-direction:column; gap:1px; border:1px solid var(--line); border-left:3px solid var(--orange); border-radius:14px; padding:11px 14px; margin-bottom:8px;}
+  .ph-card.c2{border-left-color:var(--teal);}
+  .ph-card.c3{border-left-color:var(--navy);}
+  .ph-card:last-child{margin-bottom:0;}
+  .ph-k{font-family:var(--sans); font-weight:800; font-size:12px; color:var(--ink);}
+  .ph-v{font-family:var(--sans); font-weight:500; font-size:12px; color:var(--muted);}
+
+  /* collectief weerbericht */
+  .natl{display:grid; grid-template-columns:1fr 1fr; gap:clamp(26px,4vw,54px); margin-top:clamp(22px,2.8vw,38px); align-items:center;}
+  .natl-now{display:flex; align-items:center; gap:clamp(16px,2vw,24px);}
+  .natl-ic{width:clamp(54px,5.6vw,80px); height:clamp(54px,5.6vw,80px); flex:none; color:var(--orange);}
+  .natl-k{font-family:var(--sans); font-weight:700; font-size:clamp(12px,1.05vw,14px); text-transform:uppercase; letter-spacing:.06em; color:var(--muted);}
+  .natl-v{font-family:var(--sans); font-weight:800; font-size:clamp(22px,2.5vw,34px); color:var(--ink); line-height:1.08; margin-top:3px;}
+  .bar{display:flex; height:16px; border-radius:9px; overflow:hidden; box-shadow:inset 0 0 0 1px rgba(20,20,20,.06);}
+  .bar span{display:block; height:100%;}
+  .legend{display:flex; flex-wrap:wrap; gap:8px 18px; margin-top:14px;}
+  .legend span{display:inline-flex; align-items:center; gap:7px; font-family:var(--sans); font-weight:600; font-size:clamp(12px,1.05vw,14px); color:var(--ink-soft);}
+  .legend i{width:11px; height:11px; border-radius:3px; display:inline-block;}
+  .week{display:flex; gap:clamp(8px,1.6vw,22px); margin-top:clamp(22px,2.8vw,38px);}
+  .day{display:flex; flex-direction:column; align-items:center; gap:7px;}
+  .day svg{width:clamp(22px,2.3vw,30px); height:auto; color:var(--orange);}
+  .day span{font-family:var(--sans); font-weight:700; font-size:11px; letter-spacing:.04em; color:var(--muted); text-transform:uppercase;}
+  .privnote{font-family:var(--sans); font-weight:500; font-size:clamp(13px,1.1vw,15px); color:var(--muted); margin-top:clamp(20px,2.6vw,34px); line-height:1.55; max-width:64ch;}
+  .privnote .em{color:var(--ink); font-weight:800;}
+
+  /* close */
+  .links{ display:flex; flex-wrap:wrap; gap:clamp(12px,1.8vw,26px); margin-top:clamp(22px,2.8vw,36px); align-items:center; }
+  .links a{ font-family:var(--sans); font-weight:700; font-size:clamp(15px,1.4vw,18px); color:var(--ink);
+    text-decoration:none; }
+  .links a.btn{ background:var(--orange); color:#fff; padding:12px 22px; border-radius:999px; }
+  .links a.plain{ border-bottom:2px solid var(--line); padding-bottom:2px; color:var(--ink); }
+  .closelogo{width:clamp(120px,14vw,170px); height:auto; margin-top:clamp(26px,3.4vw,46px); display:block;}
+  .credit{font-family:var(--sans); font-weight:600; font-size:clamp(12px,1.05vw,13px); color:var(--muted); margin-top:16px; letter-spacing:.01em;}
+
+  /* corner MIND mark */
+  .mark{position:absolute; top:var(--pad); left:var(--pad); z-index:2;}
+  .slide.tight .mark{top:clamp(34px,5vw,72px);}
+  .mindmark{display:inline-block; border:1.6px solid var(--ink); color:var(--ink); font-family:var(--sans);
+    font-weight:900; font-size:12px; letter-spacing:.16em; padding:3px 8px 2px; line-height:1;}
+  .slide.dark .mindmark{border-color:#fff; color:#fff;}
+
+  #progresswrap{position:fixed; top:0; left:0; right:0; height:3px; background:rgba(20,20,20,.08); z-index:50;}
+  #progress{height:100%; width:0; background:var(--orange); transition:width .6s cubic-bezier(.65,0,.2,1);}
+  .nav{position:fixed; bottom:26px; left:50%; transform:translateX(-50%); z-index:50; display:flex; gap:8px;}
+  .nav button{ width:42px; height:42px; border-radius:50%; border:1.5px solid var(--line);
+    background:#fff; cursor:pointer; color:var(--ink); display:grid; place-items:center; transition:.2s; font-size:0;}
+  .nav button:hover{background:var(--orange); color:#fff; border-color:var(--orange);}
+  .nav button:disabled{opacity:.25; cursor:default;}
+  .nav button svg{width:17px; height:17px;}
+  #counter{position:fixed; bottom:33px; right:30px; z-index:50; font-family:var(--sans); font-weight:700; font-size:13px; letter-spacing:.06em; color:var(--muted);}
+
+  #intro{position:fixed; inset:0; z-index:200; background:#fff; display:flex; align-items:center; justify-content:center; transition:opacity .6s ease;}
+  #intro.hide{opacity:0; pointer-events:none;}
+  #intro img{width:min(60vw,360px); height:auto; animation:intropop 1.1s cubic-bezier(.2,.7,.2,1) both;}
+  @keyframes intropop{0%{opacity:0; transform:scale(.94);}100%{opacity:1; transform:none;}}
+
+  .reveal>*{opacity:0; transform:translateY(14px); transition:opacity .8s ease, transform .8s cubic-bezier(.2,.7,.2,1);}
+  .slide.active .reveal>*{opacity:1; transform:none;}
+  .slide.active .reveal>*:nth-child(1){transition-delay:.06s;}
+  .slide.active .reveal>*:nth-child(2){transition-delay:.15s;}
+  .slide.active .reveal>*:nth-child(3){transition-delay:.24s;}
+  .slide.active .reveal>*:nth-child(4){transition-delay:.33s;}
+  .slide.active .reveal>*:nth-child(5){transition-delay:.42s;}
+
+  @media (max-width:820px){
+    .spectrum{grid-template-columns:repeat(2,1fr); gap:22px;}
+    .mock{grid-template-columns:1fr;}
+    .phone{margin:8px auto 0;}
+    .natl{grid-template-columns:1fr; gap:22px;}
+  }
+  @media (max-width:720px){
+    .rows{grid-template-columns:1fr; border-top:none; margin-top:22px;}
+    .rows .col{border-top:2px solid var(--line); padding:18px 0 8px;}
+    .rows .col::before{width:0;}
+    .rows .col + .col{border-left:none; padding-left:0;}
+    .mark{display:none;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    #intro{display:none;}
+    .reveal>*{opacity:1; transform:none; transition:none;}
+    #intro img{animation:none;}
+    #track{transition:none;}
+  }
+  @media print{
+    @page{size:1280px 720px; margin:0;}
+    body{overflow:visible; background:#fff;}
+    #intro{display:none;}
+    #track{display:block; transform:none!important; height:auto; width:auto;}
+    .slide{height:720px; width:1280px; page-break-after:always; break-after:page; overflow:hidden;}
+    .reveal>*{opacity:1!important; transform:none!important;}
+    #progresswrap,.nav,#counter{display:none!important;}
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="arrowR" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="arrowL" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+  <symbol id="w-sun" viewBox="0 0 48 48"><circle cx="24" cy="24" r="8.5" fill="none" stroke="currentColor" stroke-width="2.6"/><g stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="24" y1="5" x2="24" y2="10"/><line x1="24" y1="38" x2="24" y2="43"/><line x1="5" y1="24" x2="10" y2="24"/><line x1="38" y1="24" x2="43" y2="24"/><line x1="10.7" y1="10.7" x2="14.2" y2="14.2"/><line x1="33.8" y1="33.8" x2="37.3" y2="37.3"/><line x1="10.7" y1="37.3" x2="14.2" y2="33.8"/><line x1="33.8" y1="14.2" x2="37.3" y2="10.7"/></g></symbol>
+  <symbol id="w-partly" viewBox="0 0 48 48"><circle cx="19" cy="16" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4"/><g stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="19" y1="4" x2="19" y2="7.5"/><line x1="7" y1="16" x2="10.5" y2="16"/><line x1="10.2" y1="7.2" x2="12.6" y2="9.6"/><line x1="27.8" y1="7.2" x2="25.4" y2="9.6"/></g><g fill="currentColor"><circle cx="26" cy="30" r="8"/><circle cx="35" cy="30" r="7"/><circle cx="30" cy="26" r="7"/><rect x="20" y="30" width="21" height="8" rx="4"/></g></symbol>
+  <symbol id="w-cloud" viewBox="0 0 48 48"><g fill="currentColor"><circle cx="18" cy="24" r="8"/><circle cx="31" cy="24" r="9"/><circle cx="24" cy="18" r="8"/><rect x="12" y="24" width="25" height="9" rx="4.5"/></g></symbol>
+  <symbol id="w-mist" viewBox="0 0 48 48"><g fill="currentColor"><circle cx="19" cy="17" r="7"/><circle cx="29" cy="17" r="8"/><rect x="13" y="17" width="22" height="7" rx="3.5"/></g><g fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" opacity=".6"><line x1="11" y1="31" x2="37" y2="31"/><line x1="14" y1="38" x2="40" y2="38"/></g></symbol>
+  <symbol id="w-storm" viewBox="0 0 48 48"><g fill="currentColor"><circle cx="18" cy="18" r="8"/><circle cx="30" cy="18" r="9"/><circle cx="24" cy="13" r="8"/><rect x="12" y="18" width="24" height="8" rx="4"/></g><path fill="currentColor" d="M25 27l-7 10h5l-2 7 8-12h-5z"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M12 6.5C10.8 5.2 9 4.5 6.5 4.5c-1 0-1.8.1-2.5.3v13.5c.7-.2 1.5-.3 2.5-.3 2.5 0 4.3.7 5.5 2M12 6.5c1.2-1.3 3-2 5.5-2 1 0 1.8.1 2.5.3v13.5c-.7-.2-1.5-.3-2.5-.3-2.5 0-4.3.7-5.5 2M12 6.5v13.5"/></symbol>
+  <symbol id="i-head" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M4 14v-1.5a8 8 0 0 1 16 0V14M4 14h1.6A1.4 1.4 0 0 1 7 15.4v3.2A1.4 1.4 0 0 1 5.6 20H5a1 1 0 0 1-1-1zM20 14h-1.6a1.4 1.4 0 0 0-1.4 1.4v3.2A1.4 1.4 0 0 0 18.4 20h.6a1 1 0 0 0 1-1z"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M12 3l2 5 5 2-5 2-2 5-2-5-5-2 5-2zM18.5 15l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/></symbol>
+</svg>
+
+<div id="intro"><img src="mind-logo.webp" alt="MIND" /></div>
+
+<div id="progresswrap"><div id="progress"></div></div>
+
+<div id="track">
+
+  <!-- 1 · COVER -->
+  <section class="slide cover warm glow">
+    <div class="inner reveal">
+      <img class="cover-logo" src="mind-logo.webp" alt="MIND" />
+      <h1>Het Mentale <span class="hl">Weerbericht</span></h1>
+      <div class="eyebrow" style="margin-bottom:0;">Een concept voor de app van MIND</div>
+      <div class="cover-meta">Hoe de app werkt en het concept erachter · zomer 2026</div>
+      <div class="weatherrow" aria-hidden="true">
+        <svg style="color:var(--amber)"><use href="#w-sun"/></svg>
+        <svg style="color:var(--orange)"><use href="#w-partly"/></svg>
+        <svg style="color:var(--teal)"><use href="#w-cloud"/></svg>
+        <svg style="color:var(--blue)"><use href="#w-mist"/></svg>
+        <svg style="color:var(--navy)"><use href="#w-storm"/></svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 · DE KERN + PROBLEEM -->
+  <section class="slide glow">
+    <div class="mark"><span class="mindmark">MIND</span></div>
+    <div class="inner reveal">
+      <div class="eyebrow">De kern</div>
+      <h2 class="lg">De breedte van MIND, <span class="hl">persoonlijk.</span></h2>
+      <p class="lead">MIND heeft al ontzettend veel waardevols: gidsen, artikelen, challenges, zelftesten, hulplijnen. Maar de gebruiker moet zelf weten waar te zoeken, en juist als je het zwaar hebt is daar de energie niet voor. <span class="em">De app draait dat om: niet nóg een losse challenge-app, maar dé MIND-app zelf. Alle kennis en hulp van MIND, voor iedereen, doorzoekbaar én per persoon voorgesteld.</span></p>
+      <div class="shift">
+        <div class="shift-node"><span class="big">de website is breed</span><span class="lb">alles wat MIND weet</span></div>
+        <span class="shift-line"></span>
+        <svg class="shift-arr" viewBox="0 0 24 24"><use href="#arrowR"/></svg>
+        <div class="shift-node now"><span class="big">de app is persoonlijk</span><span class="lb">wat vandaag voor jou telt</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 · HET CONCEPT + WEERSTATEN -->
+  <section class="slide dark glow tight">
+    <div class="mark"><span class="mindmark">MIND</span></div>
+    <div class="inner reveal">
+      <div class="eyebrow">Het concept</div>
+      <h2 class="md">Hoe is het weer in je <span class="hl">hoofd?</span></h2>
+      <p class="lead sm">Eén menselijke vraag wordt de navigatielaag van de app. Niet jij zoekt door MIND heen, MIND komt naar jou toe. Je antwoordt in weer: een gewone taal om te zeggen hoe het gaat, voordat het zwaar wordt, en zonder diagnose. Het weer zegt hoe zwaar het is. Eén tik erbij zegt waar het over gaat, zodat de juiste content bij je past.</p>
+      <div class="spectrum">
+        <div class="wstate"><svg class="ic" style="color:var(--amber)"><use href="#w-sun"/></svg><span class="nm">Helder</span><span class="ms">ruimte in je hoofd, het gaat goed</span></div>
+        <div class="wstate"><svg class="ic" style="color:var(--orange)"><use href="#w-partly"/></svg><span class="nm">Opklaringen</span><span class="ms">wisselend, maar er is licht</span></div>
+        <div class="wstate"><svg class="ic" style="color:var(--teal)"><use href="#w-cloud"/></svg><span class="nm">Bewolkt</span><span class="ms">het zit wat tegen, grijs</span></div>
+        <div class="wstate"><svg class="ic" style="color:var(--blue)"><use href="#w-mist"/></svg><span class="nm">Mistig</span><span class="ms">veel in je hoofd, weinig overzicht</span></div>
+        <div class="wstate"><svg class="ic" style="color:var(--navy)"><use href="#w-storm"/></svg><span class="nm">Stormachtig</span><span class="ms">het is heftig vandaag</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 · DE DAGELIJKSE FLOW -->
+  <section class="slide tight">
+    <div class="mark"><span class="mindmark">MIND</span></div>
+    <div class="inner reveal">
+      <div class="eyebrow">De dagelijkse flow</div>
+      <h2 class="md">Van check-in naar <span class="hl">kleine stap.</span></h2>
+      <p class="lead sm">Bij de start vragen we kort wat basis: leeftijd, waar je mee zit, of je voor jezelf of als naaste kijkt. Geen intake, puur om het persoonlijk te maken. Daarna, elke dag:</p>
+      <div class="flow">
+        <div class="step"><div class="n">1</div><div class="st"><div class="st-t">Check-in</div><div class="st-d"><span class="q">Hoe is het weer in je hoofd vandaag?</span> Je kiest het weerbeeld dat past.</div></div></div>
+        <div class="step"><div class="n">2</div><div class="st"><div class="st-t">Waar zit het in?</div><div class="st-d">Eén tik erbij, in gewone taal: somberheid, angst, stress, piekeren of eenzaamheid. Zo weet de app niet alleen hoe zwaar het is, maar ook waarover.</div></div></div>
+        <div class="step"><div class="n">3</div><div class="st"><div class="st-t">Betekenis</div><div class="st-d">Kort en menselijk: wat dat gevoel kan betekenen. Geen oordeel, geen diagnose.</div></div></div>
+        <div class="step"><div class="n">4</div><div class="st"><div class="st-t">Kleine stap</div><div class="st-d">Eén tip of oefening uit de online gids van MIND, passend bij je weer én je thema. Eén stap, niet tien.</div></div></div>
+        <div class="step"><div class="n">5</div><div class="st"><div class="st-t">Verdieping</div><div class="st-d">Wil je begrijpen wat er speelt? Artikelen, gidsen en Psychipedia liggen klaar, maar dringen niet aan.</div></div></div>
+        <div class="step"><div class="n">6</div><div class="st"><div class="st-t">Hulp</div><div class="st-d">Wil je met iemand praten? Anoniem via de MIND Hulplijn, per telefoon, chat, app of mail. Altijd laagdrempelig in beeld.</div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · DASHBOARD -->
+  <section class="slide warm tight">
+    <div class="mark"><span class="mindmark">MIND</span></div>
+    <div class="inner reveal">
+      <div class="eyebrow">Het dashboard</div>
+      <h2 class="md">Mijn Mentale <span class="hl">Weer.</span></h2>
+      <div class="mock">
+        <div class="zones">
+          <p class="lead sm" style="margin-top:0;">Eén overzicht. Bovenaan je weer van vandaag, daaronder drie duidelijke richtingen.</p>
+          <div class="zone"><div class="zk">Voor nu</div><div class="zv">Eén tip of oefening uit de gids van MIND, passend bij vandaag.</div><div class="zt">lezen · doen</div></div>
+          <div class="zone b2"><div class="zk">Om te begrijpen</div><div class="zv">Een artikel, gids of uitleg uit Psychipedia over het thema.</div></div>
+          <div class="zone b3"><div class="zk">Als je meer nodig hebt</div><div class="zv">Anoniem via de MIND Hulplijn, per telefoon, chat, app of mail.</div></div>
+        </div>
+        <div class="phone" aria-hidden="true">
+          <div class="ph-top">MIND · vandaag</div>
+          <div class="ph-hero">
+            <svg class="ph-w"><use href="#w-partly"/></svg>
+            <div class="ph-hero-t">In je hoofd vandaag</div>
+            <div class="ph-hero-s">Bewolkt met opklaringen</div>
+          </div>
+          <div class="ph-card"><span class="ph-k">Voor nu</span><span class="ph-v">Oefening van 2 minuten</span></div>
+          <div class="ph-card c2"><span class="ph-k">Om te begrijpen</span><span class="ph-v">Uitleg over piekeren</span></div>
+          <div class="ph-card c3"><span class="ph-k">Als je meer nodig hebt</span><span class="ph-v">Anoniem via de MIND Hulplijn</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 · ZORGVULDIG BY DESIGN -->
+  <section class="slide dark glow">
+    <div class="mark"><span class="mindmark">MIND</span></div>
+    <div class="inner reveal">
+      <div class="eyebrow">Zorgvuldig by design</div>
+      <h2 class="lg">Licht in gebruik, <span class="hl">zorgvuldig</span> van binnen.</h2>
+      <div class="rows">
+        <div class="col"><div class="k">Erkenning, geen prestatie</div><div class="v">Geen scores of streaks die je kunt verliezen, wel zachte voortgang. Gamification blijft licht en op algemene data, nooit een gezondheidsprofiel.</div></div>
+        <div class="col"><div class="k">Slim, geen AI-therapeut</div><div class="v">AI helpt alleen met zoeken en personaliseren, verzint nooit advies en verwijst terug naar bestaande MIND-content. De app is geen vervanging van hulpverlening.</div></div>
+        <div class="col"><div class="k">Privacy &amp; AVG</div><div class="v">Alle tools en hosting zijn ISO 27001-gecertificeerd. Je mentale gesteldheid wordt gepseudonimiseerd, met aparte, uitdrukkelijke toestemming; het collectieve beeld blijft anoniem en geaggregeerd. De app is zo ingericht dat zwaardere certificering niet nodig is: AVG-conform, met de privacy officer vanaf de start.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 · HET WEERBERICHT VAN NEDERLAND -->
+  <section class="slide tight">
+    <div class="mark"><span class="mindmark">MIND</span></div>
+    <div class="inner reveal">
+      <div class="eyebrow">De extra laag</div>
+      <h2 class="md">Hoe voelt Nederland zich <span class="hl">vandaag?</span></h2>
+      <p class="lead sm">Wanneer veel mensen vrijwillig en zorgvuldig inchecken, ontstaat er iets nieuws: een collectief beeld van hoe Nederland zich voelt. Anoniem opgeteld, dag na dag.</p>
+      <div class="natl">
+        <div class="natl-now">
+          <svg class="natl-ic"><use href="#w-partly"/></svg>
+          <div>
+            <div class="natl-k">Nederland vandaag</div>
+            <div class="natl-v">Bewolkt, met opklaringen</div>
+          </div>
+        </div>
+        <div>
+          <div class="bar" aria-hidden="true">
+            <span style="width:22%; background:var(--amber)"></span>
+            <span style="width:31%; background:var(--orange)"></span>
+            <span style="width:27%; background:var(--teal)"></span>
+            <span style="width:13%; background:var(--blue)"></span>
+            <span style="width:7%; background:var(--navy)"></span>
+          </div>
+          <div class="legend">
+            <span><i style="background:var(--amber)"></i>Helder</span>
+            <span><i style="background:var(--orange)"></i>Opklaringen</span>
+            <span><i style="background:var(--teal)"></i>Bewolkt</span>
+            <span><i style="background:var(--blue)"></i>Mistig</span>
+            <span><i style="background:var(--navy)"></i>Stormachtig</span>
+          </div>
+        </div>
+      </div>
+      <div class="week" aria-hidden="true">
+        <div class="day"><svg><use href="#w-cloud"/></svg><span>ma</span></div>
+        <div class="day"><svg><use href="#w-mist"/></svg><span>di</span></div>
+        <div class="day"><svg><use href="#w-storm"/></svg><span>wo</span></div>
+        <div class="day"><svg><use href="#w-cloud"/></svg><span>do</span></div>
+        <div class="day"><svg><use href="#w-partly"/></svg><span>vr</span></div>
+        <div class="day"><svg><use href="#w-partly"/></svg><span>za</span></div>
+        <div class="day"><svg><use href="#w-sun"/></svg><span>zo</span></div>
+      </div>
+      <p class="privnote">Altijd anoniem, vrijwillig en geaggregeerd, nooit herleidbaar tot een persoon. <span class="em">Een spiegel voor het land, geen dossier over iemand.</span></p>
+    </div>
+  </section>
+
+  <!-- 8 · CLOSE -->
+  <section class="slide warm glow">
+    <div class="inner reveal">
+      <div class="eyebrow">De belofte</div>
+      <h2 class="xl">Van zoeken naar <span class="hl">begeleid worden.</span></h2>
+      <p class="lead">Van generieke website naar persoonlijke MIND-flow. Van challenge-app naar dagelijkse gids. <span class="em">De app maakt de breedte van MIND persoonlijk, elke dag opnieuw.</span></p>
+      <p class="lead sm">Belangrijk: dit is het concept van hoe de app werkt, nog niet het eindontwerp. Komende week volgt de user flow met de dataverwerking en privacy-aanpak, voor jullie én de privacy officer. Designs volgen daarna, ruim voor 24 augustus.</p>
+      <div class="links">
+        <a class="btn" href="mailto:max@backtobeing.tech">Plan de volgende sessie</a>
+        <a class="plain" href="mailto:max@backtobeing.tech">max@backtobeing.tech</a>
+      </div>
+      <img class="closelogo" src="mind-logo.webp" alt="MIND" />
+      <div class="credit">Concept &amp; bouw: Back to Being, voor MIND</div>
+    </div>
+  </section>
+
+</div>
+
+<nav class="nav">
+  <button id="prev" aria-label="Vorige slide"><svg><use href="#arrowL"/></svg></button>
+  <button id="next" aria-label="Volgende slide"><svg><use href="#arrowR"/></svg></button>
+</nav>
+<div id="counter">01 / 08</div>
+
+<script>
+  const track=document.getElementById('track');
+  const slides=[...document.querySelectorAll('.slide')];
+  const progress=document.getElementById('progress');
+  const counter=document.getElementById('counter');
+  const prevBtn=document.getElementById('prev');
+  const nextBtn=document.getElementById('next');
+  let i=0;
+  const pad2=n=>String(n).padStart(2,'0');
+  function update(){
+    track.style.transform='translateX(-'+(i*100)+'vw)';
+    progress.style.width=(i/(slides.length-1)*100)+'%';
+    counter.textContent=pad2(i+1)+' / '+pad2(slides.length);
+    slides.forEach((s,k)=>s.classList.toggle('active',k===i));
+    prevBtn.disabled=(i===0); nextBtn.disabled=(i===slides.length-1);
+  }
+  function go(n){ i=Math.max(0,Math.min(slides.length-1,n)); update(); }
+  window.addEventListener('keydown',e=>{
+    if(['ArrowRight','PageDown',' ','Enter'].includes(e.key)){e.preventDefault();go(i+1);}
+    else if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();go(i-1);}
+    else if(e.key==='Home'){e.preventDefault();go(0);}
+    else if(e.key==='End'){e.preventDefault();go(slides.length-1);}
+  });
+  nextBtn.addEventListener('click',()=>go(i+1));
+  prevBtn.addEventListener('click',()=>go(i-1));
+  let x0=null,y0=null;
+  window.addEventListener('touchstart',e=>{x0=e.touches[0].clientX;y0=e.touches[0].clientY;},{passive:true});
+  window.addEventListener('touchend',e=>{ if(x0===null)return; const dx=e.changedTouches[0].clientX-x0, dy=e.changedTouches[0].clientY-y0; if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)){go(dx<0?i+1:i-1);} x0=null;y0=null; },{passive:true});
+  update();
+</script>
+<script>
+  (function(){
+    var intro=document.getElementById('intro');
+    function endIntro(){ if(!intro) return; intro.classList.add('hide'); var n=intro; intro=null; setTimeout(function(){ if(n&&n.parentNode) n.parentNode.removeChild(n); }, 600); }
+    setTimeout(endIntro, 1700);
+  })();
+</script>
+</body>
+</html>
